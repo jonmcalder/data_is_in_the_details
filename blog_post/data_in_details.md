@@ -151,6 +151,32 @@ details <- tibble(date = "11 November 2020",
                     remove = TRUE)
 details %>% gt() %>% tab_options(table.font.size = 11)
 ```
+</style>
+<div id="romiidbood" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">date</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">province</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">mun_abbrev</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">mun_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">ward_id</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">registered_voters</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">11 November 2020</td>
+      <td class="gt_row gt_left">EASTERN CAPE</td>
+      <td class="gt_row gt_left">EC124</td>
+      <td class="gt_row gt_left">AMAHLATHI</td>
+      <td class="gt_row gt_left">21204001</td>
+      <td class="gt_row gt_left">3261</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
 
 ### Step 4: Capture the Vote Results
 
