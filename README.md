@@ -1,7 +1,7 @@
 # The Data is in the Details
 
 ## What is this repo?
-This repo is for people who want to run the code chunks contained in [this blog post]("blog_post/data_in_details.md"). 
+This repo is for people who want to run the code chunks contained in [this blog post](blog_post/data_in_details.md). 
 If you are one of these people, clone the repo and go wild! 
 
 ## The TL:DR
