@@ -2,12 +2,6 @@ The Data is in the Details
 ================
 05/03/2021
 
-<style type="text/css">
-  body{
-  font-size: 12pt;
-}
-</style>
-
 ## Mission Impossible?
 
 I want to analyse data from a recent by-election that took place on 11
