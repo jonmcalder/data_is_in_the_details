@@ -489,10 +489,10 @@ Happy coding!
 ### Appendix: Converting Scripts to Functions
 
 **Quick reminder:**  
-A function has a `name`, `arguments` and `code`. The code below shows
+A function has a `name`, `arguments` and `code`. The chunk below shows
 how they fit together. The `function` call is used to tell `R` that we
 are creating an object called `name` which is a function. The
-`argument`s indicate those data which the user must specify, unless they
+`argument`s indicate those variables which the user must specify, unless they
 have a default value specified. If a default value is specified, the
 `argument` can be left out when the function is called.
 
