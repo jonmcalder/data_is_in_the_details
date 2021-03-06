@@ -1,12 +1,7 @@
----
-title: "The Data is in the Details"
-date: "2021/03/05"
-output: 
-  html_document: 
-    toc_float: yes
-    toc: yes
-    keep_md: yes
----
+The Data is in the Details
+================
+05/03/2021
+
 <style type="text/css">
   body{
   font-size: 12pt;
@@ -15,81 +10,96 @@ output:
 
 ## Mission Impossible?
 
-I want to analyse data on a recent by-election that took place on 11 November 2020, in 95 municipal wards across South Africa.
-Unfortunately for me, the IEC [provides the raw data](https://www.elections.org.za/content/Elections/Municipal-by-elections-results/) for results of each ward's by-election in a single `.xls` file containing both the ward details and the results in human-readable format.
-Each file must be manually downloaded (Hint: remember this fact for later).
-When we open the downloaded files we see that each file contains numerous blank rows, merged rows, merged columns, and cells that are actually variable names in rows other than the first. 
-This formatting prevents me from simply using the `read*` functions in `R`. 
+I want to analyse data from a recent by-election that took place on 11
+November 2020, in 95 municipal wards across South Africa. Unfortunately
+for me, the IEC [provides the raw
+data](https://www.elections.org.za/content/Elections/Municipal-by-elections-results/)
+for results of each ward’s by-election in a single `.xls` file
+containing both the ward details and the results in human-readable
+format. Each file must be manually downloaded (Hint: remember this fact
+for later). When we open the downloaded files we see that each file
+contains numerous blank rows, merged rows, merged columns, and cells
+that are actually variable names in rows other than the first. This
+formatting prevents me from simply using the `read*` functions in `R`.
 
-
-```r
+``` r
 dplyr::glimpse(readxl::read_xls(here::here("data/ward_results/output (1).xls")))
 ```
 
-```
-## Rows: 89
-## Columns: 29
-## $ ...1                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...2                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, "Province:",...
-## $ ...3                   <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ `Electoral Commission` <chr> NA, "BY-ELECTIONS 11 Nov 2020 RESULTS REPORT...
-## $ ...5                   <chr> NA, NA, NA, "Results as on: 2020/12/06 2:12:...
-## $ ...6                   <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...7                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...8                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, "EASTERN CAP...
-## $ ...9                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...10                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...11                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...12                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...13                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...14                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...15                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...16                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...17                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...18                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...19                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...20                  <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...21                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...22                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...23                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...24                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...25                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...26                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...27                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...28                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-## $ ...29                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
-```
-As you can see, a straight import of the file into `R` results in a jumble of strangely-named, mostly `NA` variables with one or two information values scattered throughout the rows.
-But that's not all!
-The 'best part' is that the rows containing the desired information change between files depending on the characteristics of the ward that it is describing *e.g.* different numbers of voting districts or candidates up for election *etc*.
-The silver lining here is that `read_xls` **does read the file with no errors**.
-This gives us a starting point and something to work with.
+    ## Rows: 89
+    ## Columns: 29
+    ## $ ...1                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...2                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, "Province:",...
+    ## $ ...3                   <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ `Electoral Commission` <chr> NA, "BY-ELECTIONS 11 Nov 2020 RESULTS REPORT...
+    ## $ ...5                   <chr> NA, NA, NA, "Results as on: 2020/12/06 2:12:...
+    ## $ ...6                   <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...7                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...8                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, "EASTERN CAP...
+    ## $ ...9                   <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...10                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...11                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...12                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...13                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...14                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...15                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...16                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...17                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...18                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...19                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...20                  <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...21                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...22                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...23                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...24                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...25                  <lgl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...26                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...27                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...28                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ ...29                  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+
+As you can see, a straight import of the file into `R` results in a
+jumble of strangely-named, mostly `NA` variables with one or two
+information values scattered throughout the rows. But that’s not all!
+The ‘best part’ is that the rows containing the desired information
+change between files depending on the characteristics of the ward that
+it is describing *e.g.* different numbers of voting districts or
+candidates up for election *etc*. The silver lining here is that
+`read_xls` **does read the file with no errors**. This gives us a
+starting point and something to work with.
 
 ## The Plan
 
-I want to import the results contained in each of the 95 `.xls` files into `R`.
-In my former life, I would have considered capturing the data manually. 
-Now that I have limited time (and more wisdom), I will just write a function that takes the chaos of each file, processes it and presents me with a complete, tidy dataframe/tibble.
+I want to import the results contained in each of the 95 `.xls` files
+into `R`. In my former life, I would have considered capturing the data
+manually. Now that I have limited time (and more wisdom), I will just
+write a function that takes the chaos of each file, processes it and
+presents me with a complete, tidy dataframe/tibble.
 
 ### Step 1: Eyeball the Spreadsheets
 
-Before I can piece together my fucntion, I need to know if there is a reliable structure in each of the 95 spreadsheets for me to hook my function into. 
-It turns out that even though the files have lots of white-space as well as different row layouts, there is consistency in the naming of each section.
+Before I can piece together my fucntion, I need to know if there is a
+reliable structure in each of the 95 spreadsheets for me to hook my
+function into. It turns out that even though the files have lots of
+white-space as well as different row layouts, there is consistency in
+the naming of each section.
 
 ![**An Example .xls File**](xls_str_note.png)
 
-The first orange square highlights the ward metadata, database identifier and total registered voters at the time of the election.
-This section begins at the cell labelled `"Province:"`. 
-The second orange square indicates where the actual vote results begin. 
-This section is laid out in table format from the heading `"Candidate Name"`.
-We see here that each candidate's name is used just once in the table so the data is not tidy and we will have to come back to this after import.
-The third square indicates that the variable voting district is included in this table and is repeated for each candidate in the ward.
-In other words this section contains the raw data at the finest grain possible.
+The first orange square highlights the ward metadata, database
+identifier and total registered voters at the time of the election. This
+section begins at the cell labelled `"Province:"`. The second orange
+square indicates where the actual vote results begin. This section is
+laid out in table format from the heading `"Candidate Name"`. We see
+here that each candidate’s name is used just once in the table so the
+data is not tidy and we will have to come back to this after import. The
+third square indicates that the variable voting district is included in
+this table and is repeated for each candidate in the ward. In other
+words this section contains the raw data at the finest grain possible.
 
-### Step 2: Extract the Indices 
+### Step 2: Extract the Indices
 
-
-```r
+``` r
 library(tidyverse)
 library(readxl)
 library(janitor)
@@ -97,14 +107,18 @@ library(here)
 library(gt)
 ```
 
-With the ability to read the file into `R` and knowledge of the files' structural consistency, we can now extract the row indices of the cell containing `"Province:"` and `"Candidate Name"`. 
-From the `glimpse` above we see that `"Province:"` is in the second variable. 
-The code below imports the file, ascertains `which` row contains `"Province:"`, `"Candidate Name"` and also `"By-Election Ward Winner"`.
-From the code you might correctly guess that this is the label of the last row in each table of vote results.
-We don't need this line, as it is a derived value, so we subtract the index of the starting row (`- i`) to obtain `n-max` as the number of rows to read in after the start row.
+With the ability to read the file into `R` and knowledge of the files’
+structural consistency, we can now extract the row indices of the cell
+containing `"Province:"` and `"Candidate Name"`. From the `glimpse`
+above we see that `"Province:"` is in the second variable. The code
+below imports the file, ascertains `which` row contains `"Province:"`,
+`"Candidate Name"` and also `"By-Election Ward Winner"`. From the code
+you might correctly guess that this is the label of the last row in each
+table of vote results. We don’t need this line, as it is a derived
+value, so we subtract the index of the starting row (`- i`) to obtain
+`n-max` as the number of rows to read in after the start row.
 
-
-```r
+``` r
 dummy <- read_xls(here("data/ward_results/output (1).xls"))
 j <- which(dummy[,2] == "Province:")
 i <- min(which(dummy[,1] == "Candidate Name"))
@@ -113,23 +127,25 @@ n_max <- which(dummy[,1] == "By-Election Ward Winner") - i
 
 ### Step 3: Capture the Ward Details
 
-Next we want to extract the ward details into a table. 
-Using `j` from above, we `slice` the original tibble and keep just the two columns we want.
+Next we want to extract the ward details into a table. Using `j` from
+above, we `slice` the original tibble and keep just the two columns we
+want.
 
-
-```r
+``` r
 dummy2 <- slice(dummy, j:(j + 3)) %>%
           select(detail = ...2,
                  value = ...8)
 ```
 
-Next we build a tibble containing these details.
-There are two extra things we can do now. 
-The first is that we add the date of the by-election, because while most of the ward details will probably not change over time, the number of `registered_voters` almost certainly will!
-The second is to separate the `municipality` variable into each of its two components - the abbreviation of the municipality name (`mun_abbrev`) and the full name (`mun_name`).
+Next we build a tibble containing these details. There are two extra
+things we can do now. The first is that we add the date of the
+by-election, because while most of the ward details will probably not
+change over time, the number of `registered_voters` almost certainly
+will! The second is to separate the `municipality` variable into each of
+its two components - the abbreviation of the municipality name
+(`mun_abbrev`) and the full name (`mun_name`).
 
-
-```r
+``` r
 details <- tibble(date = "11 November 2020",
                       province = dummy2$value[1],
                       municipality = dummy2$value[2],
@@ -142,12 +158,11 @@ details <- tibble(date = "11 November 2020",
 details %>% gt() %>% tab_options(table.font.size = 11)
 ```
 
-```{=html}
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#iixcvujznu .gt_table {
+#romiidbood .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -172,7 +187,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-left-color: #D3D3D3;
 }
 
-#iixcvujznu .gt_heading {
+#romiidbood .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -184,7 +199,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#iixcvujznu .gt_title {
+#romiidbood .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -194,7 +209,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-bottom-width: 0;
 }
 
-#iixcvujznu .gt_subtitle {
+#romiidbood .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -204,13 +219,13 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-top-width: 0;
 }
 
-#iixcvujznu .gt_bottom_border {
+#romiidbood .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#iixcvujznu .gt_col_headings {
+#romiidbood .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -225,7 +240,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#iixcvujznu .gt_col_heading {
+#romiidbood .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -245,7 +260,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   overflow-x: hidden;
 }
 
-#iixcvujznu .gt_column_spanner_outer {
+#romiidbood .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -257,15 +272,15 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   padding-right: 4px;
 }
 
-#iixcvujznu .gt_column_spanner_outer:first-child {
+#romiidbood .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#iixcvujznu .gt_column_spanner_outer:last-child {
+#romiidbood .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#iixcvujznu .gt_column_spanner {
+#romiidbood .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -277,7 +292,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   width: 100%;
 }
 
-#iixcvujznu .gt_group_heading {
+#romiidbood .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -299,7 +314,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   vertical-align: middle;
 }
 
-#iixcvujznu .gt_empty_group_heading {
+#romiidbood .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -314,15 +329,15 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   vertical-align: middle;
 }
 
-#iixcvujznu .gt_from_md > :first-child {
+#romiidbood .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#iixcvujznu .gt_from_md > :last-child {
+#romiidbood .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#iixcvujznu .gt_row {
+#romiidbood .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -341,7 +356,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   overflow-x: hidden;
 }
 
-#iixcvujznu .gt_stub {
+#romiidbood .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -353,7 +368,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   padding-left: 12px;
 }
 
-#iixcvujznu .gt_summary_row {
+#romiidbood .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -363,7 +378,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   padding-right: 5px;
 }
 
-#iixcvujznu .gt_first_summary_row {
+#romiidbood .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -373,7 +388,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-top-color: #D3D3D3;
 }
 
-#iixcvujznu .gt_grand_summary_row {
+#romiidbood .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -383,7 +398,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   padding-right: 5px;
 }
 
-#iixcvujznu .gt_first_grand_summary_row {
+#romiidbood .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -393,11 +408,11 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-top-color: #D3D3D3;
 }
 
-#iixcvujznu .gt_striped {
+#romiidbood .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#iixcvujznu .gt_table_body {
+#romiidbood .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -406,7 +421,7 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-bottom-color: #D3D3D3;
 }
 
-#iixcvujznu .gt_footnotes {
+#romiidbood .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -420,13 +435,13 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#iixcvujznu .gt_footnote {
+#romiidbood .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#iixcvujznu .gt_sourcenotes {
+#romiidbood .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -440,46 +455,46 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#iixcvujznu .gt_sourcenote {
+#romiidbood .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#iixcvujznu .gt_left {
+#romiidbood .gt_left {
   text-align: left;
 }
 
-#iixcvujznu .gt_center {
+#romiidbood .gt_center {
   text-align: center;
 }
 
-#iixcvujznu .gt_right {
+#romiidbood .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#iixcvujznu .gt_font_normal {
+#romiidbood .gt_font_normal {
   font-weight: normal;
 }
 
-#iixcvujznu .gt_font_bold {
+#romiidbood .gt_font_bold {
   font-weight: bold;
 }
 
-#iixcvujznu .gt_font_italic {
+#romiidbood .gt_font_italic {
   font-style: italic;
 }
 
-#iixcvujznu .gt_super {
+#romiidbood .gt_super {
   font-size: 65%;
 }
 
-#iixcvujznu .gt_footnote_marks {
+#romiidbood .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="iixcvujznu" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="romiidbood" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -504,17 +519,20 @@ details %>% gt() %>% tab_options(table.font.size = 11)
   
   
 </table></div>
-```
 
 ### Step 4: Capture the Vote Results
 
-The next step is to create a file with the data of the vote results for each candidate.
-The solution I settled on was to use `i` and `n_max` to re-import the result rows from the same `.xls` file that generated them.
-The benefit of this approach is that the imported tibble will us the table headings in the `.xls` file as the variable names.
-The code below imports the results to an object named `data`, filters out rows containing only `NA` values using the new `if_any` function from `dplyr` v1.04, removes all `NA` columns, and then renames the two variables where the names were not correctly specified during import.
+The next step is to create a file with the data of the vote results for
+each candidate. The solution I settled on was to use `i` and `n_max` to
+re-import the result rows from the same `.xls` file that generated them.
+The benefit of this approach is that the imported tibble will us the
+table headings in the `.xls` file as the variable names. The code below
+imports the results to an object named `data`, filters out rows
+containing only `NA` values using the new `if_any` function from `dplyr`
+v1.04, removes all `NA` columns, and then renames the two variables
+where the names were not correctly specified during import.
 
-
-```r
+``` r
 data <- read_xls(here("data/ward_results/output (1).xls"),
                  skip = i,
                  n_max = n_max - 1) %>%
@@ -526,12 +544,11 @@ data <- read_xls(here("data/ward_results/output (1).xls"),
 head(data) %>% gt() %>% tab_options(table.font.size = 11)
 ```
 
-```{=html}
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#fuybtvdytl .gt_table {
+#xxqzkugzag .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -556,7 +573,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-left-color: #D3D3D3;
 }
 
-#fuybtvdytl .gt_heading {
+#xxqzkugzag .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -568,7 +585,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#fuybtvdytl .gt_title {
+#xxqzkugzag .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -578,7 +595,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-bottom-width: 0;
 }
 
-#fuybtvdytl .gt_subtitle {
+#xxqzkugzag .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -588,13 +605,13 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-top-width: 0;
 }
 
-#fuybtvdytl .gt_bottom_border {
+#xxqzkugzag .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#fuybtvdytl .gt_col_headings {
+#xxqzkugzag .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -609,7 +626,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#fuybtvdytl .gt_col_heading {
+#xxqzkugzag .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -629,7 +646,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   overflow-x: hidden;
 }
 
-#fuybtvdytl .gt_column_spanner_outer {
+#xxqzkugzag .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -641,15 +658,15 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   padding-right: 4px;
 }
 
-#fuybtvdytl .gt_column_spanner_outer:first-child {
+#xxqzkugzag .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#fuybtvdytl .gt_column_spanner_outer:last-child {
+#xxqzkugzag .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#fuybtvdytl .gt_column_spanner {
+#xxqzkugzag .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -661,7 +678,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   width: 100%;
 }
 
-#fuybtvdytl .gt_group_heading {
+#xxqzkugzag .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -683,7 +700,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   vertical-align: middle;
 }
 
-#fuybtvdytl .gt_empty_group_heading {
+#xxqzkugzag .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -698,15 +715,15 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   vertical-align: middle;
 }
 
-#fuybtvdytl .gt_from_md > :first-child {
+#xxqzkugzag .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#fuybtvdytl .gt_from_md > :last-child {
+#xxqzkugzag .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#fuybtvdytl .gt_row {
+#xxqzkugzag .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -725,7 +742,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   overflow-x: hidden;
 }
 
-#fuybtvdytl .gt_stub {
+#xxqzkugzag .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -737,7 +754,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   padding-left: 12px;
 }
 
-#fuybtvdytl .gt_summary_row {
+#xxqzkugzag .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -747,7 +764,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   padding-right: 5px;
 }
 
-#fuybtvdytl .gt_first_summary_row {
+#xxqzkugzag .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -757,7 +774,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-top-color: #D3D3D3;
 }
 
-#fuybtvdytl .gt_grand_summary_row {
+#xxqzkugzag .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -767,7 +784,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   padding-right: 5px;
 }
 
-#fuybtvdytl .gt_first_grand_summary_row {
+#xxqzkugzag .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -777,11 +794,11 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-top-color: #D3D3D3;
 }
 
-#fuybtvdytl .gt_striped {
+#xxqzkugzag .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#fuybtvdytl .gt_table_body {
+#xxqzkugzag .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -790,7 +807,7 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-bottom-color: #D3D3D3;
 }
 
-#fuybtvdytl .gt_footnotes {
+#xxqzkugzag .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -804,13 +821,13 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#fuybtvdytl .gt_footnote {
+#xxqzkugzag .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#fuybtvdytl .gt_sourcenotes {
+#xxqzkugzag .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -824,46 +841,46 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#fuybtvdytl .gt_sourcenote {
+#xxqzkugzag .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#fuybtvdytl .gt_left {
+#xxqzkugzag .gt_left {
   text-align: left;
 }
 
-#fuybtvdytl .gt_center {
+#xxqzkugzag .gt_center {
   text-align: center;
 }
 
-#fuybtvdytl .gt_right {
+#xxqzkugzag .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#fuybtvdytl .gt_font_normal {
+#xxqzkugzag .gt_font_normal {
   font-weight: normal;
 }
 
-#fuybtvdytl .gt_font_bold {
+#xxqzkugzag .gt_font_bold {
   font-weight: bold;
 }
 
-#fuybtvdytl .gt_font_italic {
+#xxqzkugzag .gt_font_italic {
   font-style: italic;
 }
 
-#fuybtvdytl .gt_super {
+#xxqzkugzag .gt_super {
   font-size: 65%;
 }
 
-#fuybtvdytl .gt_footnote_marks {
+#xxqzkugzag .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="fuybtvdytl" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="xxqzkugzag" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -921,22 +938,22 @@ head(data) %>% gt() %>% tab_options(table.font.size = 11)
   
   
 </table></div>
-```
 
-The next small issue is that each candidate has a row containing their `Total` votes across all `voting_district`s. 
-We don't need this as we can derive it as needed, so we `slice` the `data` to remove each instance of a `Total` row.
+The next small issue is that each candidate has a row containing their
+`Total` votes across all `voting_district`s. We don’t need this as we
+can derive it as needed, so we `slice` the `data` to remove each
+instance of a `Total` row.
 
-
-```r
+``` r
 x <- which(data$voting_district == "Total")
 data <- slice(data, -x)
 ```
 
-This is looking good, but we still have to deal with the `NA` values interspersed throughout the rows.
-For simplicity, I decided to `pull` each variable to a vector object and use `drop_na`.
+This is looking good, but we still have to deal with the `NA` values
+interspersed throughout the rows. For simplicity, I decided to `pull`
+each variable to a vector object and use `drop_na`.
 
-
-```r
+``` r
 candidate_name <- data %>% select(candidate_name) %>% drop_na() %>% pull()
 party_name <- data %>% select(party_name) %>% drop_na() %>%  pull()
 voting_district <- data %>% select(voting_district) %>% drop_na() %>% pull()
@@ -946,25 +963,28 @@ vd_percent <- data %>% select(vd_percent) %>% drop_na() %>% pull() %>% str_repla
 
 ### Merge the two tibbles
 
-We're almost there, but we have to deal with the issue I mentioned right at the start - each candidate's name only appears once in the results table.
-We need each `candidate_name` to appear in each row of `voting_district` results.
-The code below identifies the number of voting districts in the ward, which we will then use to build the final tibble. 
+We’re almost there, but we have to deal with the issue I mentioned right
+at the start - each candidate’s name only appears once in the results
+table. We need each `candidate_name` to appear in each row of
+`voting_district` results. The code below identifies the number of
+voting districts in the ward, which we will then use to build the final
+tibble.
 
-
-```r
+``` r
 rep <- dim(data %>%
        filter(is.na(voting_district) == FALSE) %>%
        distinct(voting_district))[1]
 ```
 
-At last we can put all the data together in a single tibble!
-The only thing worth noting here is the vectorised nature of `R`. 
-We are combining vectors of `length = >1` from `data` with vectors of `length = 1` from `details`. 
-This is fine because the `length = 1` vectors are simply repeated for each row of the tibble.
-We also use `str_to_title` to convert each character vector from upper case to title style (first letter of each word capitalised).
+At last we can put all the data together in a single tibble! The only
+thing worth noting here is the vectorised nature of `R`. We are
+combining vectors of `length = >1` from `data` with vectors of
+`length = 1` from `details`. This is fine because the `length = 1`
+vectors are simply repeated for each row of the tibble. We also use
+`str_to_title` to convert each character vector from upper case to title
+style (first letter of each word capitalised).
 
-
-```r
+``` r
 final_data <- tibble(
     date = details$date,
     province = str_to_title(details$province),
@@ -981,12 +1001,11 @@ final_data <- tibble(
 head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
 ```
 
-```{=html}
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#aosgufezhe .gt_table {
+#eaffeclrog .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1011,7 +1030,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-left-color: #D3D3D3;
 }
 
-#aosgufezhe .gt_heading {
+#eaffeclrog .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1023,7 +1042,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#aosgufezhe .gt_title {
+#eaffeclrog .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1033,7 +1052,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-bottom-width: 0;
 }
 
-#aosgufezhe .gt_subtitle {
+#eaffeclrog .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1043,13 +1062,13 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-top-width: 0;
 }
 
-#aosgufezhe .gt_bottom_border {
+#eaffeclrog .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#aosgufezhe .gt_col_headings {
+#eaffeclrog .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1064,7 +1083,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#aosgufezhe .gt_col_heading {
+#eaffeclrog .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1084,7 +1103,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   overflow-x: hidden;
 }
 
-#aosgufezhe .gt_column_spanner_outer {
+#eaffeclrog .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1096,15 +1115,15 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   padding-right: 4px;
 }
 
-#aosgufezhe .gt_column_spanner_outer:first-child {
+#eaffeclrog .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#aosgufezhe .gt_column_spanner_outer:last-child {
+#eaffeclrog .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#aosgufezhe .gt_column_spanner {
+#eaffeclrog .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1116,7 +1135,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   width: 100%;
 }
 
-#aosgufezhe .gt_group_heading {
+#eaffeclrog .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1138,7 +1157,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   vertical-align: middle;
 }
 
-#aosgufezhe .gt_empty_group_heading {
+#eaffeclrog .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1153,15 +1172,15 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   vertical-align: middle;
 }
 
-#aosgufezhe .gt_from_md > :first-child {
+#eaffeclrog .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#aosgufezhe .gt_from_md > :last-child {
+#eaffeclrog .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#aosgufezhe .gt_row {
+#eaffeclrog .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1180,7 +1199,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   overflow-x: hidden;
 }
 
-#aosgufezhe .gt_stub {
+#eaffeclrog .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1192,7 +1211,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   padding-left: 12px;
 }
 
-#aosgufezhe .gt_summary_row {
+#eaffeclrog .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1202,7 +1221,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   padding-right: 5px;
 }
 
-#aosgufezhe .gt_first_summary_row {
+#eaffeclrog .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1212,7 +1231,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-top-color: #D3D3D3;
 }
 
-#aosgufezhe .gt_grand_summary_row {
+#eaffeclrog .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1222,7 +1241,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   padding-right: 5px;
 }
 
-#aosgufezhe .gt_first_grand_summary_row {
+#eaffeclrog .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1232,11 +1251,11 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-top-color: #D3D3D3;
 }
 
-#aosgufezhe .gt_striped {
+#eaffeclrog .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#aosgufezhe .gt_table_body {
+#eaffeclrog .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1245,7 +1264,7 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-bottom-color: #D3D3D3;
 }
 
-#aosgufezhe .gt_footnotes {
+#eaffeclrog .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1259,13 +1278,13 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#aosgufezhe .gt_footnote {
+#eaffeclrog .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#aosgufezhe .gt_sourcenotes {
+#eaffeclrog .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1279,46 +1298,46 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   border-right-color: #D3D3D3;
 }
 
-#aosgufezhe .gt_sourcenote {
+#eaffeclrog .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#aosgufezhe .gt_left {
+#eaffeclrog .gt_left {
   text-align: left;
 }
 
-#aosgufezhe .gt_center {
+#eaffeclrog .gt_center {
   text-align: center;
 }
 
-#aosgufezhe .gt_right {
+#eaffeclrog .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#aosgufezhe .gt_font_normal {
+#eaffeclrog .gt_font_normal {
   font-weight: normal;
 }
 
-#aosgufezhe .gt_font_bold {
+#eaffeclrog .gt_font_bold {
   font-weight: bold;
 }
 
-#aosgufezhe .gt_font_italic {
+#eaffeclrog .gt_font_italic {
   font-style: italic;
 }
 
-#aosgufezhe .gt_super {
+#eaffeclrog .gt_super {
   font-size: 65%;
 }
 
-#aosgufezhe .gt_footnote_marks {
+#eaffeclrog .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="aosgufezhe" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="eaffeclrog" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1418,25 +1437,24 @@ head(final_data) %>% gt() %>% tab_options(table.font.size = 11)
   
   
 </table></div>
-```
 
 ## Completing the Mission
 
 We now have a complete, tidy tibble of all the information we want.
 
-**!! MISSION ACCOMPLISHED !!** 
+**!! MISSION ACCOMPLISHED !!**
 
-... actually not yet... 
+… actually not yet…
 
-I set out to write a function that will import **ALL THE FILES** and process them.
-We need to take the code above which is essentially an `R` script and make it a function. 
-Thankfully, this is not too difficult.
+I set out to write a function that will import **ALL THE FILES** and
+process them. We need to take the code above which is essentially an `R`
+script and make it a function. Thankfully, this is not too difficult.
 
-The final version of the function is shown below. 
-If you are not familiar with writing your own functions, you can skip to the bottom to continue reading about how to convert the script to the function. 
+The final version of the function is shown below. If you are not
+familiar with writing your own functions, you can skip to the bottom to
+continue reading about how to convert the script to the function.
 
-
-```r
+``` r
 read_iec_ber <- function(file, 
                         details_start = "Province:", 
                         result_start = "Candidate Name",
@@ -1533,65 +1551,69 @@ read_iec_ber <- function(file,
 }
 ```
 
-### "I'm Calling It!"
+### “I’m Calling It!”
 
-To use the function, we need simply need to provide a filepath or list of filepaths to the function.
-The code below generates the list of filepaths for the 96 `.xls` files in the relevant folder.
+To use the function, we need simply need to provide a filepath or list
+of filepaths to the function. The code below generates the list of
+filepaths for the 96 `.xls` files in the relevant folder.
 
-
-```r
+``` r
 file_list <- list.files(path = here::here("data/ward_results"), pattern = "xls$")
 ```
 
-Finally, because it is a list, we use `lapply` to run the function for each file in the list.
-If you look at the empty folder found at `../super_wednesday/data/tidy` while the function runs, you can watch the files being written to the folder.
+Finally, because it is a list, we use `lapply` to run the function for
+each file in the list. If you look at the empty folder found at
+`../super_wednesday/data/tidy` while the function runs, you can watch
+the files being written to the folder.
 
-
-```r
+``` r
 df <- lapply(file.path(here::here("data/ward_results"), file_list), read_iec_ber)
 ```
 
 ![](view_df.png)
 
-The `df` object is a list with the data from each of the 96 files... Wait... there were only 95 wards in the by-election so we must have a duplicated file somewhere. 
-I must have downloaded two results files for one of the wards and then Windows simply assigned it to an unused `output (x).xls` path.
-I don't want to open each file and try and figure out which ward is duplicated, so instead I will use the `anyDuplicated` function (which I learned about when this actually did happen in my workflow).
-The code below shows us that `output (65).xls` is a duplicated file and can be deleted.
+The `df` object is a list with the data from each of the 96 files… Wait…
+there were only 95 wards in the by-election so we must have a duplicated
+file somewhere. I must have downloaded two results files for one of the
+wards and then Windows simply assigned it to an unused `output (x).xls`
+path. I don’t want to open each file and try and figure out which ward
+is duplicated, so instead I will use the `anyDuplicated` function (which
+I learned about when this actually did happen in my workflow). The code
+below shows us that `output (65).xls` is a duplicated file and can be
+deleted.
 
-(Sidenote: The benefit of writing files using the `ward_id` variable for the name is taht I only wrote 95 unique files to disk.
-The duplicate simply overwrote the original.)
+(Sidenote: The benefit of writing files using the `ward_id` variable for
+the name is that I only wrote 95 unique files to disk. The duplicate
+simply overwrote the original.)
 
-
-```r
+``` r
 file_list[anyDuplicated(df)]
 ```
 
-```
-## [1] "output (65).xls"
-```
+    ## [1] "output (65).xls"
+
 Now it really is:
 
-**!! MISSION ACCOMPLISHED !!**  
+**!! MISSION ACCOMPLISHED !!**
 
 Thank you for reading.
 
-I hope this post has helped you to see silver linings and possibilities when confronted by data in human-friendly presentation formats.
+I hope this post has helped you to see silver linings and possibilities
+when confronted by data in human-friendly presentation formats.
 
 Happy coding!
-
-
 
 ### Appendix: Converting Scripts to Functions
 
 **Quick reminder:**  
-A function has a `name`, `arguments` and `code`.
-The code below shows how they fit together.
-The `function` call is used to tell `R` that we are creating an object called `name` which is a function.
-The `argument`s indicate those data which the user must specify, unless they have a default value specified.
-If a default value is specified, the `argument` can be left out when the function is called.
+A function has a `name`, `arguments` and `code`. The code below shows
+how they fit together. The `function` call is used to tell `R` that we
+are creating an object called `name` which is a function. The
+`argument`s indicate those data which the user must specify, unless they
+have a default value specified. If a default value is specified, the
+`argument` can be left out when the function is called.
 
-
-```r
+``` r
 <NAME> <- function(argument1,
                    argmuent2, 
                    argument3 = <DEFAULT VALUE>){
@@ -1603,8 +1625,7 @@ If a default value is specified, the `argument` can be left out when the functio
 
 For my function the code looks like this:
 
-
-```r
+``` r
 read_iec_ber <- function(file, 
                         details_start = "Province:", 
                         result_start = "Candidate Name",
@@ -1616,21 +1637,23 @@ read_iec_ber <- function(file,
       }
 ```
 
-The function is called `read_iec_ber` (where the "ber" stands for by-election).
-The `arguments` are:  
-  - `file`: a path to the file that the function will process,
-  - `details_start`: a character string indicating starting row of the ward details in the file,
-  - `results_start`: a character string indicating the starting row of the results table in the file,
-  - `results_end`: a character string indicating the end row of the results table in the file, 
-  - `date`: the date of the by-election that the file is from.  
+The function is called `read_iec_ber` (where the “ber” stands for
+by-election). The `arguments` are:  
+- `file`: a path to the file that the function will process, -
+`details_start`: a character string indicating starting row of the ward
+details in the file, - `results_start`: a character string indicating
+the starting row of the results table in the file, - `results_end`: a
+character string indicating the end row of the results table in the
+file, - `date`: the date of the by-election that the file is from.
 
 For each `argument` other than `file`, I specified a default value.
-These values may need to be changed in future by-elections but it simplifies the function call in this case. 
+These values may need to be changed in future by-elections but it
+simplifies the function call in this case.
 
-The first section of function code simply specifies the packages that the function needs to expect to use functions from.
+The first section of function code simply specifies the packages that
+the function needs to expect to use functions from.
 
-
-```r
+``` r
  # Specify the packages required in our function code:
 
     require(readxl)
@@ -1642,10 +1665,10 @@ The first section of function code simply specifies the packages that the functi
     require(here)
 ```
 
-The main chunk of the code comes directly from the script shown in each stage in the main post.
+The main chunk of the code comes directly from the script shown in each
+stage in the main post.
 
-
-```r
+``` r
 # Use a dummy file read to extract the municipal info and obtain key 
     # array indices for the actual data import
 
@@ -1721,17 +1744,15 @@ The main chunk of the code comes directly from the script shown in each stage in
       total_registered_voters = details$registered_voters)
 ```
 
-The last section takes the data and writes it to a uniquely named `.csv` file which can be imported with any appropriate `read*` function.
-In this iteration, the written file uses the `ward_id` number as its name.
-I expect that I will add the by-election `date` to each file in the future. 
+The last section takes the data and writes it to a uniquely named `.csv`
+file which can be imported with any appropriate `read*` function. In
+this iteration, the written file uses the `ward_id` number as its name.
+I expect that I will add the by-election `date` to each file in the
+future.
 
-
-```r
+``` r
 # Write the tibble to the disk with the ward number as its name i.e. "{ward_id}.xls"
 
 file_name <- paste0(c(here::here("data/tidy/"), "/", details$ward_id[1],".csv"), collapse = "")
 write_csv(final_data, file_name, append = FALSE)
 ```
-
-That's everything you need to know! 
-Happy coding!
