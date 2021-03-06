@@ -151,7 +151,6 @@ details <- tibble(date = "11 November 2020",
                     remove = TRUE)
 details %>% gt() %>% tab_options(table.font.size = 11)
 ```
-</style>
 <div id="romiidbood" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
@@ -201,6 +200,64 @@ data <- read_xls(here("data/ward_results/output (1).xls"),
         clean_names()
 head(data) %>% gt() %>% tab_options(table.font.size = 11)
 ```
+<div id="xxqzkugzag" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">candidate_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">party_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">voting_district</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">vd_votes</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">vd_percent</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">NOSAMKELO NYAMEKA NDESI</td>
+      <td class="gt_row gt_left">ECONOMIC FREEDOM FIGHTERS</td>
+      <td class="gt_row gt_left">10650013</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_left">3.62%</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_right">8</td>
+      <td class="gt_row gt_left">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">10650046</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_left">8.33%</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_right">13</td>
+      <td class="gt_row gt_left">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">10650125</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_left">0.00%</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_right">0</td>
+      <td class="gt_row gt_left">NA</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
 
 The next small issue is that each candidate has a row containing their
 `Total` votes across all `voting_district`s. We don’t need this as we
